@@ -5,7 +5,7 @@ var events = require('events');
 var emitter = new events.EventEmitter();
 var fs = require('fs');
 
-//to emit an event on completion of an async function call
+//emits an event on completion of an async function call
 function emitAsync(randomID, data) {
     emitter.emit(randomID, data);
 }
@@ -153,7 +153,7 @@ for (var i = 0; i < abc_m.length; i++) {
 var azJSON = JSON.parse(fs.readFileSync('dictAZ3.json', 'UTF8'));
 
 //each element of asyncFncs_next2 is a filter async function chained/followed by an async file write function
-//async_all will call all elements of asyncFncs_next2 without waiting
+//async_all will call all elements of asyncFncs_next2 
 async_all(asyncFncs_next2, azJSON);
 
 //each element of asyncFnc is an async func that may be independent and not necessarily
