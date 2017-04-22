@@ -1,0 +1,22 @@
+{
+  "name": "asyncevents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "asyncEvents.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/relloller/asyncEvents.git"
+  },
+  "author": "Victor Shaw",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/relloller/asyncEvents/issues"
+  },
+  "homepage": "https://github.com/relloller/asyncEvents#readme",
+  "dependencies": {
+    "node-uuid": "^1.4.8"
+  }
+}
