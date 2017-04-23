@@ -1,22 +1,27 @@
 {
-  "name": "asyncevents",
+  "name": "async-emission",
   "version": "1.0.0",
   "description": "",
-  "main": "asyncEvents.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/relloller/asyncEvents.git"
+    "url": "git+https://github.com/relloller/async-emission.git"
   },
   "author": "Victor Shaw",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/relloller/asyncEvents/issues"
+    "url": "https://github.com/relloller/async-emission/issues"
   },
-  "homepage": "https://github.com/relloller/asyncEvents#readme",
+  "homepage": "https://github.com/relloller/async-emission#readme",
   "dependencies": {
+    "body-parser": "^1.17.1",
+    "jsonwebtoken": "^7.3.0",
+    "mocha": "^3.2.0",
+    "mongoose": "^4.9.5",
     "node-uuid": "^1.4.8"
   }
 }
