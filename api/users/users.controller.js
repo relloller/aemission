@@ -60,8 +60,6 @@ function userAvailable(username, res) {
             } else if (data === null) {
                 async.emit(emitid, true);
             } else if (data.username) {
-                // console.log('usernameAvailable no' );
-                // async.emitter.removeAllListeners(emitid);
                 async.emit(emitid, false);
                 return res.status(409).send('username exists');
             }
@@ -91,7 +89,6 @@ function emailAvailable(email, res) {
 function checkPW(password, res) {
     return function(emitid, userD) {
         bcrypt.compare(password, userD.pwHash, function(err, result) {
-            // res == true
             if (err || !result) {
                 async.emit(emitid, false);
                 return res.status(401).send('username/pw not valid');
@@ -101,15 +98,16 @@ function checkPW(password, res) {
     }
 }
 
+
 function verifyJWT(token,res) {
     return function(emitid, userD) {
-            var options = {algorithms: ['HS256']};
-        jwt.verify(token, secretoflife, options, function(err, asyncToken) {
+        jwt.verify(token, secretoflife, {algorithm: 'HS256'};, function(err, asyncToken) {
             if (err) return res.status(500).send('System Error');
             async.emit(emitid,true,{token:asyncToken, username:userD.username});
         });
     }
 }
+
 
 function encodeJWT(secretoflife,res) {
     return function(emitid, userD) {
@@ -119,6 +117,8 @@ function encodeJWT(secretoflife,res) {
         });
     }
 }
+
+
 function encodeJWT(secretoflife,res) {
     return function(emitid, userD) {
         jwt.sign({ username: userD.username}, secretoflife, { algorithm: 'HS256' }, function(err, asyncToken) {
@@ -201,7 +201,7 @@ process.on('uncaughtException', function(err, data) {
 
 
 function handleError(res, err) {
-    console.log(err);
+    console.error(err);
     return res.status(500).json({ msg: 'System Error' });
 }
 
