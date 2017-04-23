@@ -3,7 +3,6 @@ https://github.com/relloller/async-emission
 */
 'use strict';
 
-var jwt = require('jwt-simple');
 var http = require('http');
 var express = require('express');
 var app = express();
