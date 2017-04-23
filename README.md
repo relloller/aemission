@@ -1,8 +1,9 @@
 # async-emission
 	async function chaining in series and parallel/concurrent execution.
-	Implementation is driven by event emissions.
-    Example of chained async functions to register a user account. 
-    This registration function can be seen in /api/users.
+	Implementation is driven by event emission.
+	
+    The code below shows a series of async functions used to register a user account. 
+    This async routine can be found in /api/users.
 ```javascript
 
 	function registerUser(req, res) {
@@ -17,13 +18,28 @@
 	    ]);
 	}
 ```
-#Installation
-     
+## Installation
+
+Clone Repo 
+
      git clone https://github.com/relloller/async-emission
+     
      cd async-emission
+     
+Install Dependencies     
+     
      npm install
-     start mongoDB
+     
+Start mongoDB
+
+     mongod
+     
+Start API Server
+
      npm start
+
+Run Mocha Tests
+
      npm test
      
      
