@@ -16,7 +16,7 @@ function asciiB64(asciiStr) {
 
 
 
-describe("asyncEmission", function() {
+describe("async-emission", function() {
 
     describe('GET /api', function() {
         it("returns status code 200 and 'async-emission Demo API'", function(done) {
@@ -49,7 +49,7 @@ describe("asyncEmission", function() {
             })
         });
 
-        it("returns status code 409 and msg 'username exists' for attempted registration of existing username", function() {
+        it("returns status code 409 and msg 'username exists' for attempted registration of existing username", function(done) {
             request({
                 method: 'POST',
                 uri: base_url + '/register',
@@ -62,10 +62,11 @@ describe("asyncEmission", function() {
             }, function(error, res, body) {
                 assert.equal(res.statusCode, 409);
                 assert.equal(body, 'username exists');
+                done()
             })
         });
 
-        it("returns status code 409 and msg 'email exists' for attempted registration of existing email", function() {
+        it("returns status code 409 and msg 'email exists' for attempted registration of existing email", function(done) {
             request({
                 method: 'POST',
                 uri: base_url + '/register',
@@ -78,6 +79,7 @@ describe("asyncEmission", function() {
             }, function(error, res, body) {
                 assert.equal(res.statusCode, 409);
                 assert.equal(body, 'email exists');
+                done()
             })
         });
 
