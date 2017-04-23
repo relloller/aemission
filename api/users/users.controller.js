@@ -8,9 +8,11 @@ var secretoflife = "yourmamaissofatshesatonabinarytreeandconvertedittoalinkedlis
 var bcrypt = require('bcrypt');
 var async = require("../async-emission.js");
 
+
 emitterUser.on('error', function(err) {
     console.log('error emit', err);
 });
+
 
 function registerUser(req, res) {
     async.next([
@@ -101,7 +103,7 @@ function checkPW(password, res) {
 
 function verifyJWT(token,res) {
     return function(emitid, userD) {
-        jwt.verify(token, secretoflife, {algorithm: 'HS256'};, function(err, asyncToken) {
+        jwt.verify(token, secretoflife, {algorithm: 'HS256'}, function(err, asyncToken) {
             if (err) return res.status(500).send('System Error');
             async.emit(emitid,true,{token:asyncToken, username:userD.username});
         });
@@ -153,6 +155,7 @@ function checkParams(req, res) {
     }
 }
 
+
 function hashPW(password, salt, res) {
     return function(emitid) {
         bcrypt.hash(password, salt, function(err, hash) {
@@ -194,8 +197,7 @@ function atobAuth(str) {
 
 
 process.on('uncaughtException', function(err, data) {
-    console.log('err', err, data);
-    console.log('uncaughtException err', err);
+    console.log('uncaughtException err', err,data);
 });
 
 
@@ -209,4 +211,4 @@ function handleError(res, err) {
 module.exports = {
     login: login,
     register: registerUser
-}
+};

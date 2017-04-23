@@ -1,4 +1,5 @@
 'use strict';
+
 var uuid = require('node-uuid');
 var emitter = new(require('events')).EventEmitter();
 
@@ -16,6 +17,7 @@ function asyncEmit(emitid, tf, data) {
     else emitter.emit(emitid, false, data);
 }
 
+
 function asyncNext(arrFn, optD) {
     var k = 0;
     var randomID = 'asyncNext '+uuid.v1();
@@ -31,11 +33,12 @@ function asyncNext(arrFn, optD) {
     process.nextTick(function() { arrFn[k](randomID, optD) });
 }
 
+
 function asyncAll(asyncArgs, optData) {
     var len = asyncArgs.length;
     var num_done = 0;
     var randomID = 'asyncAll ' + uuid.v1();
-    // console.log('asyncAll.uID', asyncAll.uID,asyncAll.fnc);
+
     //listens for emitted events to unique randomID
     emitter.on(randomID, function(data) {
         if (++num_done === len) {
@@ -47,23 +50,23 @@ function asyncAll(asyncArgs, optData) {
         }
     });
 
-    //calls all async functions
-        // asyncArgs[i](randomID, optData);
+    //calls all async functions in asyncArgs
     for (var i = 0; i < len; i++) {
         setImmediate(function(x) {
             return function() {
                 asyncArgs[x](randomID, optData);
             }
-        }(i))
+        }(i));
     }
 }
 
-
+//scope storing
 asyncAll.wtvz = function () {
     var that=this;
     return that;
 }
 
+//attach a method to a function declaration..leads to hacky JS
 asyncAll.funktion = function (uID,fncs,optD2) {
     this.fnc = asyncEmit;
     this.uID = {1:uID};
@@ -79,4 +82,4 @@ module.exports={
 	emit: asyncEmit,
 	emitter: emitter,
     all_funktion: asyncAll.funktion
-}
+};
