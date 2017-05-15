@@ -43,9 +43,9 @@ function userExists(username, res) {
         }, function(err, data) {
             if (err || data === null) {
                 async.emit(emitid, false);
-                return process.nextTick(res.status(401).send('username/pw not valid'));
+                return res.status(401).send('username/pw not valid');
             }
-            process.nextTick(async.emit(emitid, true, data));
+           async.emit(emitid, true, data);
         });
     }
 }
@@ -58,12 +58,12 @@ function userAvailable(username, res) {
         }, function(err, data) {
             if (err) {
                 async.emit(emitid, false, err);
-                return process.nextTick(res.status(500).send('System Error'));
+                return res.status(500).send('System Error');
             } else if (data === null) {
-                process.nextTick(async.emit(emitid, true));
+               async.emit(emitid, true);
             } else if (data.username) {
                 async.emit(emitid, false);
-                return process.nextTick(res.status(409).send('username exists'));
+                return res.status(409).send('username exists');
             }
         });
     }
@@ -76,12 +76,12 @@ function emailAvailable(email, res) {
         }, function(err, data) {
             if (err) {
                 async.emit(emitid, false, err);
-                return process.nextTick(res.status(500).send('System Error'));
+                return res.status(500).send('System Error');
             } else if (data === null) {
-                process.nextTick(async.emit(emitid, true));
+                async.emit(emitid, true);
             } else if (data.email) {
                 async.emit(emitid, false);
-                return process.nextTick(res.status(409).send('email exists'));
+                return res.status(409).send('email exists');
             }
         });
     }
@@ -93,9 +93,9 @@ function checkPW(password, res) {
         bcrypt.compare(password, userD.pwHash, function(err, result) {
             if (err || !result) {
                 async.emit(emitid, false);
-                return process.nextTick(res.status(401).send('username/pw not valid'));
+                return res.status(401).send('username/pw not valid');
             }
-            process.nextTick(async.emit(emitid, result, userD));
+            async.emit(emitid, result, userD);
         });
     }
 }
@@ -105,7 +105,7 @@ function verifyJWT(token, res) {
     return function(emitid, userD) {
         jwt.verify(token, secretoflife, { algorithm: 'HS256' }, function(err, asyncToken) {
             if (err) return res.status(500).send('System Error');
-            process.nextTick(async.emit(emitid, true, { token: asyncToken, username: userD.username }));
+            async.emit(emitid, true, { token: asyncToken, username: userD.username });
         });
     }
 }
@@ -115,7 +115,7 @@ function encodeJWT(secretoflife, res) {
     return function(emitid, userD) {
         jwt.sign({ username: userD.username }, secretoflife, { algorithm: 'HS256', expiresIn: '12h' }, function(err, asyncToken) {
             if (err) return res.status(500).send('System Error');
-            process.nextTick(async.emit(emitid, true, { token: asyncToken, username: userD.username }));
+           async.emit(emitid, true, { token: asyncToken, username: userD.username });
         });
     }
 }
@@ -125,7 +125,7 @@ function encodeJWT(secretoflife, res) {
 function respLogin(res) {
     return function(emitid, tokenData) {
         async.emit(emitid, true);
-        return process.nextTick(res.status(200).json(tokenData));
+        return res.status(200).json(tokenData);
     }
 }
 
@@ -141,7 +141,7 @@ function checkParams(req, res) {
                 return res.status(400).send('All fields required');
             }
             userPW.email = req.body.email;
-            process.nextTick(async.emit(emitid, true, userPW));
+            async.emit(emitid, true, userPW);
         });
     }
 }
@@ -152,9 +152,9 @@ function hashPW(password, salt, res) {
         bcrypt.hash(password, salt, function(err, hash) {
             if (err) {
                 async.emit(emitid, false, err);
-                return process.nextTick(res.status(500).json({ msg: "System Error" }));
+                return res.status(500).json({ msg: "System Error" });
             }
-            process.nextTick(async.emit(emitid, true, hash));
+            async.emit(emitid, true, hash);
         });
     }
 }
@@ -165,9 +165,9 @@ function saveUser(req, res) {
         User.create({ username: req.body.username, email: req.body.email, pwHash: hash }, function(err, data) {
             if (err) {
                 async.emit(emitid, false, err);
-                return process.nextTick(handleError(res, err));
+                return handleError(res, err);
             }
-            process.nextTick(async.emit(emitid, true, data));
+            async.emit(emitid, true, data);
         });
     }
 }
@@ -187,15 +187,15 @@ function atobAuth(str) {
 }
 
 
-process.on('uncaughtException', function(err, data) {
-    console.log('uncaughtException err', err, data);
+process.on('uncaughtException', function(err) {
+    console.log('uncaughtException err', err);
 });
 
 
 
 function handleError(res, err) {
     console.error(err);
-    return process.nextTick(res.status(500).json({ msg: 'System Error' }));
+    return res.status(500).json({ msg: 'System Error' });
 }
 
 

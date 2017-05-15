@@ -14,15 +14,14 @@ function asyncEmit(emitid, tf, data) {
     	console.log('asyncNext stopped', 'emitid:',emitid);
     	emitter.removeAllListeners(emitid);
     }
-    else emitter.emit(emitid, false, data);
+    else emitter.emit(emitid, data);
 }
 
 
 function asyncNext(arrFn, optD) {
     var k = 0;
     var randomID = 'asyncNext '+uuid.v1();
-    emitter.on(randomID, function(err,data) {
-        if(err) return err;
+    emitter.on(randomID, function(data) {
         data = data || optD || '';
         if (++k < arrFn.length) arrFn[k](randomID, data);
         else {
@@ -44,9 +43,6 @@ function asyncAll(asyncArgs, optData) {
         if (++num_done === len) {
             console.log('asyncAll done')
             emitter.removeAllListeners(randomID);
-            if(typeof asyncAll.fnc['1'] === 'function'){
-                asyncEmit(asyncAll.uID['1'],true, '123');
-            }
         }
     });
 
@@ -60,26 +56,12 @@ function asyncAll(asyncArgs, optData) {
     }
 }
 
-//scope storing
-asyncAll.wtvz = function () {
-    var that=this;
-    return that;
-}
-
-//attach a method to a function declaration..leads to hacky JS
-asyncAll.funktion = function (uID,fncs,optD2) {
-    this.fnc = asyncEmit;
-    this.uID = {1:uID};
-    this(fncs, optD2)
-}
 
 console.log('asyncEmission Module');
 
 module.exports={
-    that: asyncAll.wtvz(),
 	next: asyncNext,
 	all: asyncAll,
 	emit: asyncEmit,
-	emitter: emitter,
-    all_funktion: asyncAll.funktion
+	emitter: emitter
 };
