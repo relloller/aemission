@@ -3,7 +3,7 @@
 	Implementation driven by event emission of a unique identifier for each function chain
 
 To setup an asynchronous routine:
-	*```javascript
+```javascript
 		aemission.next(
 			initArgs, // Object {email:'user@example.com, pw:'password'}
 			fncs, 	  // Array  [verifyEmail, findEmailAccount, verifyPW, ...etc]
