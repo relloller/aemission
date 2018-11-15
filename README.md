@@ -4,12 +4,12 @@
 
 To setup an asynchronous routine:
 ```javascript
-		aemission.next(
-			initArgs, // Object {email:'user@example.com, pw:'password'}
-			fncs, 	  // Array  [verifyEmail, findEmailAccount, verifyPW, ...etc]
-			errCB	  // Function - general error handler 
-			);
-	```
+aemission.next(
+	initArgs, // Object {email:'user@example.com, pw:'password'}
+        fncs, 	  // Array  [verifyEmail, findEmailAccount, verifyPW, ...etc]
+        errCB	  // Function - general error handler 
+);
+```
 
 Aemission chain functions accept a callback function(cbID) and data object.
 ```javascript
@@ -18,7 +18,7 @@ function aemissionFunction(cbID, data) {
     someAsyncFunc(data, (err, results) => {
         if (err) return cbID(err, { statusCode: 500, logMsg: "message for logs" });
 	else if(results === null ) return cbID(new Error("results null", { statusCode: 400, msg: "client message" });
-        else return cbID(null, result);
+        else return cbID(null, results);
     });
  }
 ```
@@ -38,8 +38,8 @@ The code below shows a series of asynchronous functions used to register a user 
 		  createUser,
 		  encodeJWT,
 		  function(cbID, { token }) => {
-		  	res.status(200).json({ token });
-			return cbID(null, {});
+		      res.status(200).json({ token });
+		      return cbID(null, {});
 		  }
 		],
 		function errCB(eData) { 
@@ -49,7 +49,6 @@ The code below shows a series of asynchronous functions used to register a user 
 		}
 	    );
 	}
-
 ```
 ## Installation
 
