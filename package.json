@@ -1,29 +1,33 @@
 {
-  "name": "async-emission",
+  "name": "aemission",
   "version": "1.0.0",
-  "description": "",
+  "description": "Asynchronous function chaining in series and parallel/concurrent execution. \tImplementation driven by event emission of a unique identifier for each function chain",
   "main": "server.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
   "scripts": {
-    "test": "mocha",
+    "test": "./node_modules/mocha/bin/mocha",
     "start": "node server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/relloller/async-emission.git"
+    "url": "git+https://github.com/relloller/aemission.git"
   },
-  "author": "Victor Shaw",
+  "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/relloller/async-emission/issues"
+    "url": "https://github.com/relloller/aemission/issues"
   },
-  "homepage": "https://github.com/relloller/async-emission#readme",
+  "homepage": "https://github.com/relloller/aemission#readme",
   "dependencies": {
-    "bcrypt": "^1.0.2",
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2",
-    "jsonwebtoken": "^7.3.0",
-    "mocha": "^3.2.0",
-    "mongoose": "^4.9.5",
-    "node-uuid": "^1.4.8"
+    "body-parser": "^1.18.3",
+    "bcrypt": "^2.0.1",
+    "mocha": "^5.2.0",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.3.12",
+    "uuid": "^3.3.2"
   }
 }

@@ -1,15 +1,17 @@
-'use strict';
-var mongoose = require('mongoose');
+"use strict";
+
+const mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/async-emission');
 
-mongoose.connection.on('connected', function() {
-    console.log('connected async-emission db');
-});
+mongoose.set("useCreateIndex", true);
+mongoose
+  .connect("mongodb://localhost/aemission", { useNewUrlParser: true })
+  .then(() => console.log("aemission db connection successful"))
+  .catch(err => console.error("aemission db connection error", err));
 
-process.on('SIGINT', function () {
-	mongoose.connection.close(function () {
-		console.log('disconnected async-emission db');
-		process.exit(0);
-	});
+process.on("SIGINT", function() {
+  mongoose.connection.close(() => {
+    console.log("disconnected aemission db");
+    process.exit(0);
+  });
 });

@@ -1,205 +1,83 @@
-'use strict';
+"use strict";
 
-var User = require('./users.model.js');
-var uuid = require('node-uuid');
-var emitterUser = new(require('events')).EventEmitter();
-var jwt = require('jsonwebtoken');
-var secretoflife = "yourmamaissofatshesatonabinarytreeandconvertedittoalinkedlistinO(1)time";
-var bcrypt = require('bcrypt');
-var async = require("../async-emission.js");
+const Users = require("./users.model.js");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const jwtSecretKey = "meowmeow"; //should be RS256 in production
+const aemission = require("../../aemission.js");
 
+function register(req, res) {
+    const { email, password: pw } = req.body;
 
-emitterUser.on('error', function(err) {
-    console.log('error emit', err);
-});
-
-
-function registerUser(req, res) {
-    async.next([
-        checkParams(req, res),
-        userAvailable(atobAuth(req.headers.authorization.substr(6)).username, res),
-        emailAvailable(req.body.email, res),
-        hashPW(atobAuth(req.headers.authorization.substr(6)).password, 11, res),
-        saveUser(req, res),
-        encodeJWT(secretoflife, res),
-        respLogin(res)
-    ]);
-}
-
-
-function login(req, res) {
-    async.next([
-        userExists(atobAuth(req.headers.authorization.substr(6)).username, res),
-        checkPW(atobAuth(req.headers.authorization.substr(6)).password, res),
-        encodeJWT(secretoflife, res),
-        respLogin(res)
-    ]);
-}
-
-function userExists(username, res) {
-    return function(emitid) {
-        User.findOne({
-            username: username
-        }, function(err, data) {
-            if (err || data === null) {
-                async.emit(emitid, false);
-                return res.status(401).send('username/pw not valid');
+    aemission.next({ email, pw },
+        [
+            verifyParams,
+            emailAvailable,
+            hashPW,
+            createUser,
+            encodeJWT,
+            function(cbID, { token }) {
+                res.status(200).json({ token });
+                console.log('jsontoken');
+                return cbID(null, {});
             }
-           async.emit(emitid, true, data);
-        });
-    }
-}
-
-
-function userAvailable(username, res) {
-    return function(emitid) {
-        User.findOne({
-            username: username
-        }, function(err, data) {
-            if (err) {
-                async.emit(emitid, false, err);
-                return res.status(500).send('System Error');
-            } else if (data === null) {
-               async.emit(emitid, true);
-            } else if (data.username) {
-                async.emit(emitid, false);
-                return res.status(409).send('username exists');
-            }
-        });
-    }
-}
-
-function emailAvailable(email, res) {
-    return function(emitid) {
-        User.findOne({
-            email: email
-        }, function(err, data) {
-            if (err) {
-                async.emit(emitid, false, err);
-                return res.status(500).send('System Error');
-            } else if (data === null) {
-                async.emit(emitid, true);
-            } else if (data.email) {
-                async.emit(emitid, false);
-                return res.status(409).send('email exists');
-            }
-        });
-    }
-}
-
-
-function checkPW(password, res) {
-    return function(emitid, userD) {
-        bcrypt.compare(password, userD.pwHash, function(err, result) {
-            if (err || !result) {
-                async.emit(emitid, false);
-                return res.status(401).send('username/pw not valid');
-            }
-            async.emit(emitid, result, userD);
-        });
-    }
-}
-
-
-function verifyJWT(token, res) {
-    return function(emitid, userD) {
-        jwt.verify(token, secretoflife, { algorithm: 'HS256' }, function(err, asyncToken) {
-            if (err) return res.status(500).send('System Error');
-            async.emit(emitid, true, { token: asyncToken, username: userD.username });
-        });
-    }
-}
-
-
-function encodeJWT(secretoflife, res) {
-    return function(emitid, userD) {
-        jwt.sign({ username: userD.username }, secretoflife, { algorithm: 'HS256', expiresIn: '12h' }, function(err, asyncToken) {
-            if (err) return res.status(500).send('System Error');
-           async.emit(emitid, true, { token: asyncToken, username: userD.username });
-        });
-    }
-}
-
-
-
-function respLogin(res) {
-    return function(emitid, tokenData) {
-        async.emit(emitid, true);
-        return res.status(200).json(tokenData);
-    }
-}
-
-
-function checkParams(req, res) {
-    return function(emitid) {
-        setImmediate(function() {
-            let userPW = atobAuth(req.headers.authorization.substr(6));
-            req.body.username = userPW.username;
-            req.body.password = userPW.password;
-            if (!req.body.email || !userPW.username || !userPW.password) {
-                async.emit(emitid, false, { code: 400, msg: 'All fields required' });
-                return res.status(400).send('All fields required');
-            }
-            userPW.email = req.body.email;
-            async.emit(emitid, true, userPW);
-        });
-    }
-}
-
-
-function hashPW(password, salt, res) {
-    return function(emitid) {
-        bcrypt.hash(password, salt, function(err, hash) {
-            if (err) {
-                async.emit(emitid, false, err);
-                return res.status(500).json({ msg: "System Error" });
-            }
-            async.emit(emitid, true, hash);
-        });
-    }
-}
-
-
-function saveUser(req, res) {
-    return function(emitid, hash) {
-        User.create({ username: req.body.username, email: req.body.email, pwHash: hash }, function(err, data) {
-            if (err) {
-                async.emit(emitid, false, err);
-                return handleError(res, err);
-            }
-            async.emit(emitid, true, data);
-        });
-    }
-}
-
-
-
-function atobAuth(str) {
-    var userpw = new Buffer.from(str, 'base64').toString('binary');
-    for (var i = 0; i < userpw.length; i++) {
-        if (userpw.charAt(i) === ":") {
-            return {
-                username: userpw.substring(0, i),
-                password: userpw.substring(i + 1)
-            };
+        ],
+        function errCB(eData) { 
+            const { logMsg, msg, statusCode } = eData;
+            if (msg && statusCode) return res.status(statusCode).json({ statusCode, msg });
+            else return res.status(500).end();
         }
-    }
+    );
+
 }
 
-
-process.on('uncaughtException', function(err) {
-    console.log('uncaughtException err', err);
-});
-
-
-
-function handleError(res, err) {
-    console.error(err);
-    return res.status(500).json({ msg: 'System Error' });
+function verifyParams(cbID, { email, pw }) {
+    if (!email || !pw || (email === "" || pw === ""))
+        return cbID(new Error("ParamsBlank"), {
+            statusCode: 406,
+            msg: "Email/password cannot be empty"
+        });
+    else return cbID(null, { email, pw });
 }
 
+function emailAvailable(cbID, { email }) {
+    Users.findOne(
+        { email },
+        (err, data) => {
+            if (err) return cbID(err, { statusCode: 500, logMsg: "emailAvailable" });
+            else if (data === null) return cbID(null, true);
+            else return cbID(new Error("Email exists"), {
+                statusCode: 409,
+                msg: "Email exists"
+            });
+        }
+    );
+}
+
+function hashPW(cbID, { pw }) {
+    bcrypt.hash(pw, 11, (err, pwHash) => {
+        if (err) return cbID(err, { statusCode: 500, logMsg: "hashPW" });
+        else return cbID(null, { pwHash });
+    });
+}
+
+function createUser(cbID, { email, pwHash }) {
+    Users.create({ email, pwHash }, (err, result) => {
+        if (err) return cbID(err, { statusCode: 500, logMsg: "createUser" });
+        else return cbID(null, result);
+    });
+}
+
+function encodeJWT(cbID, { _id }) {
+    jwt.sign({ _id },
+        jwtSecretKey, { algorithm: "HS256", expiresIn: "12h" },
+        (err, token) => {
+            if (err) return cbID(err, { statusCode: 500, logMsg: "encodeJWT" });
+            else return cbID(null, { token });
+        }
+    );
+}
 
 module.exports = {
-    login: login,
-    register: registerUser
+    register
 };

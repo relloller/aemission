@@ -1,26 +1,17 @@
-/*
-https://github.com/relloller/async-emission
-*/
-'use strict';
+"use strict";
+const express = require("express");
+const app = express();
+const db = require("./api/model/db.js");
+const bodyParser = require("body-parser");
+const apiRoutes = require("./api/routes/routes.js");
 
-var http = require('http');
-var express = require('express');
-var app = express();
-var bodyParser = require("body-parser");
-var db = require("./api/model/db");
-var api = require("./api/index.js");
-
-
-app.use(bodyParser.urlencoded({
-    extended: true
-}));
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "1000kb" }));
 app.use(express.static("public"));
 
-app.use("/api",api);
-var port= process.env.PORT || 8080;
-app.listen(port, process.env.IP || "0.0.0.0", function() {
-    console.log("async-emission server listening", port);
+app.get("/", (req, res) => res.status(200).send("aemission Server"));
+
+app.use("/api", apiRoutes);
+
+app.listen(process.env.PORT || 8888, process.env.IP || "0.0.0.0", function() {
+  console.log("aemission Server listening at", process.env.PORT || 8888);
 });
-
-

@@ -1,17 +1,8 @@
-/** ./api/users/users.model.js **/
+'use strict';
 
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-var words = new mongoose.Schema({
-    word: String
-});
-
-var userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    unique: true,
-    required: true
-  },
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
@@ -22,15 +13,14 @@ var userSchema = new mongoose.Schema({
     required: true,
     default: 0
   },
-  wordlist: [words],
-  name: String,
   role: {
     type: String,
     required: true,
     default: 'player'
   },
   pwHash: {
-    type:String
+    type:String,
+    required: true
   }
 });
 
